@@ -1,0 +1,11 @@
+# 1. IGNORE FOLDERS (MUST end with a forward slash /)
+venv/           
+__pycache__/    
+Notebooks/      
+models/  
+Data/       
+
+# 2. IGNORE SPECIFIC FILES (no /)
+*.pyc           
+live_feedback_log.csv 
+predicted_results.csv**
