@@ -133,7 +133,7 @@ apply_intelligence_theme('background.jpg')
 header_col1, header_col2 = st.columns([1, 4])
 with header_col1:
     try:
-        st.image(Image.open('auditor_header.jpg'), width=150)
+        st.image(Image.open('r.jpg'), width=150)
     except: st.markdown("# 🛡️")
 with header_col2:
     st.title("TRUTH ENGINE: v2.5")
@@ -220,5 +220,6 @@ if st.button("INITIATE TRUTH SCAN"):
 
 st.markdown("---")
 st.caption("Developed by News Integrity Auditor Labs | Proprietary Neural Engine")
+
 
 
