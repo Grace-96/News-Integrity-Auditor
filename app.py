@@ -82,20 +82,6 @@ def apply_intelligence_theme(file_path):
         background-color: #080a0f !important;
         border-right: 2px solid #00f2ff;
     }
-    
-    /* Targets the text inside the sidebar */
-    [data-testid="stSidebar"] .main .block-container, 
-    [data-testid="stSidebar"] .stMarkdown, 
-    [data-testid="stSidebar"] h3 {
-        color: #ffffff !important;
-    }
-    
-    /* Makes the sidebar info box look like a terminal */
-    [data-testid="stSidebar"] .stAlert {
-        background-color: #0d1117;
-        color: #00f2ff;
-        border: 1px solid #30363d;
-    }
     </style>
     ''', unsafe_allow_html=True)
 
@@ -240,4 +226,5 @@ if st.button("INITIATE TRUTH SCAN"):
 
 st.markdown("---")
 st.caption("Developed by News Integrity Auditor Labs | Proprietary Neural Engine")
+
 
