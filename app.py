@@ -1,4 +1,4 @@
-import streamlit as st
+ import streamlit as st
 import joblib
 import numpy as np
 import os
@@ -136,9 +136,17 @@ if st.button("INITIATE TRUTH SCAN"):
         v_col1, v_col2 = st.columns(2)
         with v_col1:
             st.markdown("#### ☁️ **WORD VIBRATIONS**")
-            # Word cloud with custom dark colors
-            wc = WordCloud(background_color="#080a0f", colormap='cyan', width=600, height=300).generate(cleaned)
-            fig, ax = plt.subplots(); ax.imshow(wc, interpolation="bilinear"); ax.axis('off')
+            # FIX: Changed 'cyan' to 'cool' (a valid colormap with blue/cyan tones)
+            wc = WordCloud(
+                background_color="#080a0f", 
+                colormap='cool', 
+                width=600, 
+                height=300
+            ).generate(cleaned)
+            
+            fig, ax = plt.subplots()
+            ax.imshow(wc, interpolation="bilinear")
+            ax.axis('off')
             fig.patch.set_facecolor('#080a0f')
             st.pyplot(fig)
             
@@ -151,10 +159,16 @@ if st.button("INITIATE TRUTH SCAN"):
                 'Impact': vec.data * coefficients[present_indices]
             }).sort_values(by='Impact', key=abs, ascending=False).head(8)
             
-            st.dataframe(df_contrib, hide_index=True, use_container_width=True)
-
-    else:
-        st.toast("⚠️ Input required for scanning.", icon="🚨")
+            # Use st.column_config to color the "Impact" numbers for a better UI
+            st.dataframe(
+                df_contrib, 
+                hide_index=True, 
+                use_container_width=True,
+                column_config={
+                    "Impact": st.column_config.NumberColumn(format="%.4f")
+                }
+            )
 
 st.markdown("---")
 st.caption("Developed by News Integrity Auditor Labs | Proprietary Neural Engine")
+
