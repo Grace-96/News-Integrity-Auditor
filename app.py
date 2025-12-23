@@ -67,8 +67,39 @@ def apply_intelligence_theme(file_path):
     </style>
     ''', unsafe_allow_html=True)
 
+# --- CONFIGURATION CONSTANTS ---
+# Wider thresholds to catch biased predictions
+UNCERTAINTY_THRESHOLD_LOW = 0.35 
+UNCERTAINTY_THRESHOLD_HIGH = 0.65 
+
 # --- CORE ENGINE ---
 REPO_ID = "Grace-96/News-Integrity-Auditor-Models"
+
+# Initialize NLTK components 
+try:
+    nltk.download('stopwords', quiet=True)
+    nltk.download('wordnet', quiet=True)
+    stop_words = set(stopwords.words('english'))
+    lemmatizer = WordNetLemmatizer()
+except LookupError:
+    st.error("FATAL ERROR: NLTK language data is missing.")
+    st.stop()
+
+def clean_text(text):
+    """Deep cleaning to remove biased common words."""
+    text = text.lower()
+    # Remove URLs and non-alphanumeric junk
+    text = re.sub(r'http\S+|www\S+|https\S+|[^a-z\s]+', ' ', text)
+    
+    tokens = text.split()
+    # Words that often cause accidental 'Fake' bias in simple models
+    bias_noise = {'said', 'would', 'also', 'could', 'told', 'slated', 'municipal', 'city', 'department'}
+    
+    tokens = [w for w in tokens if w not in stop_words and w not in bias_noise]
+    tokens = [lemmatizer.lemmatize(w) for w in tokens]
+    
+    return " ".join(tokens)
+
 @st.cache_resource
 def boot_system():
     try:
@@ -87,7 +118,6 @@ coefficients = np.array(f_data['coefficients'])
 st.set_page_config(page_title="TRUTH ENGINE", layout="wide")
 apply_intelligence_theme('background.jpg')
 
-# Top Navigation Style Header
 header_col1, header_col2 = st.columns([1, 4])
 with header_col1:
     try:
@@ -99,75 +129,63 @@ with header_col2:
 
 st.markdown("---")
 
-# Main Input Section
 st.markdown("### 🧬 **LINGUISTIC FEED: INPUT TARGET DATA**")
-raw_input = st.text_area("", placeholder="Paste article content or suspected propaganda here...", height=250)
+raw_input = st.text_area("", placeholder="Paste article content here...", height=250)
 
 if st.button("INITIATE TRUTH SCAN"):
     if raw_input.strip():
         with st.status("📡 **SCANNING NEURAL MARKERS...**", expanded=True) as status:
-            # Processing
-            cleaned = re.sub(r'[^a-z0-9\s]', ' ', raw_input.lower())
+            cleaned = clean_text(raw_input)
             vec = tfidf.transform([cleaned])
             probs = model.predict_proba(vec)[0]
             
-            # Catchy Verdicts
-            is_true = np.argmax(probs) == 1
-            verdict = "AUTHENTIC" if is_true else "DECEPTIVE"
+            prob_fake, prob_true = probs[0], probs[1]
             confidence = max(probs)
             
             time.sleep(1.5)
             status.update(label="SCAN COMPLETE", state="complete")
 
-        # Visual Dashboard
-        st.markdown(f"## **VERDICT: {verdict}**")
+        # Result Logic with Uncertainty Warning
+        if UNCERTAINTY_THRESHOLD_LOW < prob_true < UNCERTAINTY_THRESHOLD_HIGH:
+            st.warning("## ⚠️ **VERDICT: AUDIT UNCERTAIN**")
+            st.info("The system could not confidently classify this article. Manual forensic review required.")
+            verdict = "UNCERTAIN"
+        elif np.argmax(probs) == 1:
+            st.success("## **VERDICT: AUTHENTIC**")
+            verdict = "AUTHENTIC"
+        else:
+            st.error("## **VERDICT: DECEPTIVE**")
+            verdict = "DECEPTIVE"
         
         m_col1, m_col2, m_col3 = st.columns(3)
         with m_col1:
-            st.metric("INTEGRITY SCORE", f"{probs[1]*100:.1f}%")
+            st.metric("INTEGRITY SCORE", f"{prob_true*100:.1f}%")
         with m_col2:
-            st.metric("SKEPTICISM LEVEL", f"{probs[0]*100:.1f}%")
+            st.metric("SKEPTICISM LEVEL", f"{prob_fake*100:.1f}%")
         with m_col3:
             st.metric("ENGINE CONFIDENCE", f"{confidence*100:.1f}%")
 
         st.markdown("---")
         
-        # Fresh Visuals
         v_col1, v_col2 = st.columns(2)
         with v_col1:
             st.markdown("#### ☁️ **WORD VIBRATIONS**")
-            # FIX: Changed 'cyan' to 'cool' (a valid colormap with blue/cyan tones)
-            wc = WordCloud(
-                background_color="#080a0f", 
-                colormap='cool', 
-                width=600, 
-                height=300
-            ).generate(cleaned)
-            
-            fig, ax = plt.subplots()
-            ax.imshow(wc, interpolation="bilinear")
-            ax.axis('off')
+            wc = WordCloud(background_color="#080a0f", colormap='cool', width=600, height=300).generate(cleaned)
+            fig, ax = plt.subplots(); ax.imshow(wc, interpolation="bilinear"); ax.axis('off')
             fig.patch.set_facecolor('#080a0f')
             st.pyplot(fig)
             
         with v_col2:
             st.markdown("#### 🕵️ **FORENSIC EVIDENCE**")
-            # Get real top features
             present_indices = vec.indices
             df_contrib = pd.DataFrame({
                 'Term': feature_names[present_indices],
                 'Impact': vec.data * coefficients[present_indices]
             }).sort_values(by='Impact', key=abs, ascending=False).head(8)
             
-            # Use st.column_config to color the "Impact" numbers for a better UI
-            st.dataframe(
-                df_contrib, 
-                hide_index=True, 
-                use_container_width=True,
-                column_config={
-                    "Impact": st.column_config.NumberColumn(format="%.4f")
-                }
-            )
+            st.dataframe(df_contrib, hide_index=True, use_container_width=True,
+                         column_config={"Impact": st.column_config.NumberColumn(format="%.4f")})
+
             st.markdown("---")
             report_data = (
                 f"TRUTH ENGINE INTEL REPORT\n"
@@ -175,8 +193,8 @@ if st.button("INITIATE TRUTH SCAN"):
                 f"TIMESTAMP: {time.ctime()}\n"
                 f"VERDICT: {verdict}\n"
                 f"ENGINE CONFIDENCE: {confidence*100:.2f}%\n"
-                f"INTEGRITY SCORE: {probs[1]*100:.1f}%\n"
-                f"SKEPTICISM LEVEL: {probs[0]*100:.1f}%\n"
+                f"INTEGRITY SCORE: {prob_true*100:.1f}%\n"
+                f"SKEPTICISM LEVEL: {prob_fake*100:.1f}%\n"
             )
             st.download_button(
                 label="📩 DOWNLOAD INTELLIGENCE REPORT",
@@ -185,8 +203,8 @@ if st.button("INITIATE TRUTH SCAN"):
                 mime="text/plain"
             )
 
+    else:
+        st.toast("⚠️ Input required for scanning.", icon="🚨")
+
 st.markdown("---")
 st.caption("Developed by News Integrity Auditor Labs | Proprietary Neural Engine")
-
-
-
