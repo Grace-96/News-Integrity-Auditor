@@ -76,11 +76,17 @@ with st.sidebar:
 
 # --- PAGE 1: TRUTH SCANNER ---
 if page == "Truth Scanner":
-    st.title("TRUTH ENGINE: v2.5")
-    st.write("🛰️ **GLOBAL DISINFORMATION SCANNER** | STATUS: **READY**")
-    
-    st.markdown("### 🧬 **LINGUISTIC FEED: INPUT TARGET DATA**")
-    raw_input = st.text_area("", placeholder="Paste article content here...", height=250)
+    # Safe image loading to prevent MediaFileStorageError
+    try:
+        col1, col2 = st.columns([1, 4])
+        with col1:
+            st.image('auditor_header.jpg', width=120) # Keep your branding
+        with col2:
+            st.title("TRUTH ENGINE: v2.5")
+            st.write("🛰️ **GLOBAL DISINFORMATION SCANNER** | STATUS: **READY**")
+    except Exception:
+        # Fallback if the file is missing or corrupted
+        st.title("🛡️ TRUTH ENGINE: v2.5")
 
     if st.button("INITIATE TRUTH SCAN"):
         if raw_input.strip():
@@ -144,3 +150,4 @@ else:
 
 st.markdown("---")
 st.caption("Developed by News Integrity Auditor Labs")
+
