@@ -14,27 +14,18 @@ import matplotlib.pyplot as plt
 import base64 
 from huggingface_hub import hf_hub_download
 
-# --- SIDEBAR NAV & IDENTITY ---
+# --- SIDEBAR ABOUT SECTION ---
 with st.sidebar:
-    # We use Markdown instead of st.image to prevent storage errors
-    st.markdown("## 🛰️ **CORE SYSTEM**")
-    st.markdown("---")
-    
-    st.markdown("### 🔭 **SYSTEM NAV**")
-    # One single radio button to control your pages
-    page = st.radio("Select Interface:", ["Truth Scanner", "Methodology"], label_visibility="collapsed")
-    
-    st.divider()
-    
+    st.image(Image.open('auditor_header.jpg'), use_container_width=True)
     st.markdown("### 👤 **OPERATOR IDENT**")
     st.info("""
     **Developed by Grace-96**
     
-    Neural SVM Engine calibrated for high-precision disinformation detection.
+    This Truth Engine utilizes a calibrated SVM model to audit linguistic patterns and identify potential disinformation markers in real-time.
     """)
-    
+    st.divider()
     st.caption("v2.5 Stable Build | Dec 2025")
-    st.caption("v2.5 Stable Build | Dec 2025")
+
 
 # --- CYBER-INTELLIGENCE STYLING ---
 def get_base64_of_bin_file(bin_file):
@@ -86,29 +77,25 @@ def apply_intelligence_theme(file_path):
         color: white;
         box-shadow: 0 0 25px #ff0055;
     }}
-    <style>
-    /* 1. Target the Sidebar specifically */
+    /* Targets the Sidebar container */
     [data-testid="stSidebar"] {
-        background-color: #080a0f !important; /* Deep Void Black */
-        border-right: 2px solid #00f2ff; /* Neon Cyan Glow */
+        background-color: #080a0f !important;
+        border-right: 2px solid #00f2ff;
     }
     
-    /* 2. Style the text inside the Sidebar */
+    /* Targets the text inside the sidebar */
+    [data-testid="stSidebar"] .main .block-container, 
     [data-testid="stSidebar"] .stMarkdown, 
-    [data-testid="stSidebar"] h1, 
-    [data-testid="stSidebar"] h2, 
     [data-testid="stSidebar"] h3 {
         color: #ffffff !important;
-        font-family: 'Orbitron', sans-serif;
     }
-
-    /* 3. Make the Info box look like a glowing terminal */
+    
+    /* Makes the sidebar info box look like a terminal */
     [data-testid="stSidebar"] .stAlert {
         background-color: #0d1117;
         color: #00f2ff;
-        border: 1px solid #00f2ff;
+        border: 1px solid #30363d;
     }
-    
     </style>
     ''', unsafe_allow_html=True)
 
@@ -166,7 +153,7 @@ apply_intelligence_theme('background.jpg')
 header_col1, header_col2 = st.columns([1, 4])
 with header_col1:
     try:
-        st.image(Image.open('r.jpg'), width=150)
+        st.image(Image.open('auditor_header.jpg'), width=150)
     except: st.markdown("# 🛡️")
 with header_col2:
     st.title("TRUTH ENGINE: v2.5")
@@ -253,10 +240,4 @@ if st.button("INITIATE TRUTH SCAN"):
 
 st.markdown("---")
 st.caption("Developed by News Integrity Auditor Labs | Proprietary Neural Engine")
-
-
-
-
-
-
 
