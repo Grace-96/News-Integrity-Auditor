@@ -16,12 +16,12 @@ from huggingface_hub import hf_hub_download
 
 # --- SIDEBAR NAV & IDENTITY ---
 with st.sidebar:
-    # Use the 'system_scanning.png' you just added to your GitHub
-    st.image("system_scanning.png", use_container_width=True)
+    # This uses a reliable URL for a high-tech scanner icon
+    st.image("https://cdn-icons-png.flaticon.com/512/2592/2592209.png", width=100)
     
     st.markdown("### 🔭 **SYSTEM NAV**")
-    # This selector replaces the duplicate navigation
-    page = st.radio("", ["Truth Scanner", "Methodology"])
+    # This selector creates the page navigation without duplication
+    page = st.radio("Select Interface:", ["Truth Scanner", "Methodology"], label_visibility="collapsed")
     
     st.divider()
     
@@ -84,6 +84,28 @@ def apply_intelligence_theme(file_path):
         color: white;
         box-shadow: 0 0 25px #ff0055;
     }}
+    <style>
+    /* 1. Target the Sidebar specifically */
+    [data-testid="stSidebar"] {
+        background-color: #080a0f !important; /* Deep Void Black */
+        border-right: 2px solid #00f2ff; /* Neon Cyan Glow */
+    }
+    
+    /* 2. Style the text inside the Sidebar */
+    [data-testid="stSidebar"] .stMarkdown, 
+    [data-testid="stSidebar"] h1, 
+    [data-testid="stSidebar"] h2, 
+    [data-testid="stSidebar"] h3 {
+        color: #ffffff !important;
+        font-family: 'Orbitron', sans-serif;
+    }
+
+    /* 3. Make the Info box look like a glowing terminal */
+    [data-testid="stSidebar"] .stAlert {
+        background-color: #0d1117;
+        color: #00f2ff;
+        border: 1px solid #00f2ff;
+    }
     
     </style>
     ''', unsafe_allow_html=True)
@@ -229,6 +251,7 @@ if st.button("INITIATE TRUTH SCAN"):
 
 st.markdown("---")
 st.caption("Developed by News Integrity Auditor Labs | Proprietary Neural Engine")
+
 
 
 
