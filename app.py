@@ -79,54 +79,34 @@ UNCERTAINTY_THRESHOLD_HIGH = 0.55
 # --- END CONFIGURATION ---
 
 # ----------------------------------------------------
-# 2. MODEL AND LOGGING FUNCTIONS
 # ----------------------------------------------------
-try:
-    tfidf = joblib.load("models/tfidf_vectorizer.pkl")
-    model = joblib.load("models/calibrated_svm.pkl")
-    feature_data = joblib.load("models/svm_features.pkl")
-    
-    feature_names = np.array(feature_data['feature_names'])
-    coefficients = np.array(feature_data['coefficients'])
-    
-except Exception as e:
-    st.error(f"FATAL ERROR: Could not load model files. Please ensure you trained and saved the models correctly. Error: {e}")
-    st.stop() 
+# 2. MODEL AND LOGGING FUNCTIONS (CLOUD COMPATIBLE)
+# ----------------------------------------------------
+from huggingface_hub import hf_hub_download
+import joblib
 
-def log_prediction(text, prediction_name, confidence_score, status):
-    """Saves the user's input and the model's prediction to a CSV log."""
-    
-    LOG_FILE = "live_feedback_log.csv"
-    file_exists = os.path.isfile(LOG_FILE)
-    
-    log_entry = {
-        'timestamp': time.strftime("%Y-%m-%d %H:%M:%S"),
-        'input_text': text[:500] + "...",
-        'prediction': prediction_name,
-        'confidence': f"{confidence_score:.4f}",
-        'status': status
-    }
-    
-    log_df = pd.DataFrame([log_entry])
-    log_df.to_csv(LOG_FILE, mode='a', header=not file_exists, index=False)
+# Ensure this matches your Hugging Face username and repo name exactly
+REPO_ID = "Grace-96/News-Integrity-Auditor-Models" 
 
+@st.cache_resource 
+def load_all_assets():
+    try:
+        # This downloads the files from Hugging Face instead of looking for a local 'models/' folder
+        tfidf_path = hf_hub_download(repo_id=REPO_ID, filename="tfidf_vectorizer.pkl")
+        model_path = hf_hub_download(repo_id=REPO_ID, filename="calibrated_svm.pkl")
+        feature_path = hf_hub_download(repo_id=REPO_ID, filename="svm_features.pkl")
+        
+        return joblib.load(tfidf_path), joblib.load(model_path), joblib.load(feature_path)
+    except Exception as e:
+        st.error(f"FATAL ERROR: Could not fetch models from Hugging Face. Error: {e}")
+        st.stop()
 
-def get_top_features_for_text(text_vector, feature_names, coefficients, top_n=10):
-    """Calculates the influence of words present in the input text."""
-    
-    present_indices = text_vector.indices
-    present_coeffs = coefficients[present_indices]
-    present_features = feature_names[present_indices]
-    contributions = text_vector.data * present_coeffs
+# Load the variables
+tfidf, model, feature_data = load_all_assets()
 
-    df_contrib = pd.DataFrame({
-        'word': present_features,
-        'score': contributions
-    })
-    
-    df_contrib = df_contrib.reindex(df_contrib['score'].abs().sort_values(ascending=False).index).head(top_n)
-    
-    return df_contrib.to_dict('records')
+# Set up the features for your visuals
+feature_names = np.array(feature_data['feature_names'])
+coefficients = np.array(feature_data['coefficients'])
 
 
 # ----------------------------------------------------
@@ -302,4 +282,5 @@ if st.button("VERIFY TRUTH", type="primary"):
                     st.markdown(f"**{label}**")
 
         st.markdown("---")
+
         st.caption("Protocol: High-Confidence Machine Learning Audit. Code for demonstration purposes.")
