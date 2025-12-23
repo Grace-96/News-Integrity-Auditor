@@ -14,16 +14,24 @@ import matplotlib.pyplot as plt
 import base64 
 from huggingface_hub import hf_hub_download
 
-# --- SIDEBAR ABOUT SECTION ---
+# --- SIDEBAR NAV & IDENTITY ---
 with st.sidebar:
-    st.image(Image.open('auditor_header.jpg'), use_container_width=True)
+    # Use the 'system_scanning.png' you just added to your GitHub
+    st.image("system_scanning.png", use_container_width=True)
+    
+    st.markdown("### 🔭 **SYSTEM NAV**")
+    # This selector replaces the duplicate navigation
+    page = st.radio("", ["Truth Scanner", "Methodology"])
+    
+    st.divider()
+    
     st.markdown("### 👤 **OPERATOR IDENT**")
     st.info("""
     **Developed by Grace-96**
     
-    This Truth Engine utilizes a calibrated SVM model to audit linguistic patterns and identify potential disinformation markers in real-time.
+    Neural SVM Engine calibrated for high-precision disinformation detection.
     """)
-    st.divider()
+    
     st.caption("v2.5 Stable Build | Dec 2025")
 
 # --- CYBER-INTELLIGENCE STYLING ---
@@ -76,6 +84,27 @@ def apply_intelligence_theme(file_path):
         color: white;
         box-shadow: 0 0 25px #ff0055;
     }}
+    /* 1. Target the Sidebar specifically */
+    [data-testid="stSidebar"] {
+        background-color: #080a0f !important; /* Deep Void Black */
+        border-right: 2px solid #00f2ff; /* Neon Cyan Glow */
+    }
+    
+    /* 2. Style the text inside the Sidebar */
+    [data-testid="stSidebar"] .stMarkdown, 
+    [data-testid="stSidebar"] h1, 
+    [data-testid="stSidebar"] h2, 
+    [data-testid="stSidebar"] h3 {
+        color: #ffffff !important;
+        font-family: 'Orbitron', sans-serif;
+    }
+
+    /* 3. Make the Info box look like a glowing terminal */
+    [data-testid="stSidebar"] .stAlert {
+        background-color: #0d1117;
+        color: #00f2ff;
+        border: 1px solid #00f2ff;
+    }
     </style>
     ''', unsafe_allow_html=True)
 
@@ -220,6 +249,7 @@ if st.button("INITIATE TRUTH SCAN"):
 
 st.markdown("---")
 st.caption("Developed by News Integrity Auditor Labs | Proprietary Neural Engine")
+
 
 
 
