@@ -9,3 +9,6 @@ wordcloud
 
 matplotlib
 huggingface_hub
+shap
+streamlit-shap
+
