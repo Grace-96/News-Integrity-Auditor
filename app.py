@@ -14,6 +14,18 @@ import matplotlib.pyplot as plt
 import base64 
 from huggingface_hub import hf_hub_download
 
+# --- SIDEBAR ABOUT SECTION ---
+with st.sidebar:
+    st.image(Image.open('auditor_header.jpg'), use_container_width=True)
+    st.markdown("### 👤 **OPERATOR IDENT**")
+    st.info("""
+    **Developed by Grace-96**
+    
+    This Truth Engine utilizes a calibrated SVM model to audit linguistic patterns and identify potential disinformation markers in real-time.
+    """)
+    st.divider()
+    st.caption("v2.5 Stable Build | Dec 2025")
+
 # --- CYBER-INTELLIGENCE STYLING ---
 def get_base64_of_bin_file(bin_file):
     try:
@@ -208,4 +220,5 @@ if st.button("INITIATE TRUTH SCAN"):
 
 st.markdown("---")
 st.caption("Developed by News Integrity Auditor Labs | Proprietary Neural Engine")
+
 
