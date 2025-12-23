@@ -284,3 +284,25 @@ if st.button("VERIFY TRUTH", type="primary"):
         st.markdown("---")
 
         st.caption("Protocol: High-Confidence Machine Learning Audit. Code for demonstration purposes.")
+        def log_prediction(text, prediction_name, confidence_score, status):
+    """Saves the user's input and the model's prediction to a CSV log."""
+    LOG_FILE = "live_feedback_log.csv"
+    file_exists = os.path.isfile(LOG_FILE)
+    log_entry = {
+        'timestamp': time.strftime("%Y-%m-%d %H:%M:%S"),
+        'input_text': text[:500] + "...",
+        'prediction': prediction_name,
+        'confidence': f"{confidence_score:.4f}",
+        'status': status
+    }
+    pd.DataFrame([log_entry]).to_csv(LOG_FILE, mode='a', header=not file_exists, index=False)
+
+def get_top_features_for_text(text_vector, feature_names, coefficients, top_n=10):
+    """Calculates the influence of words present in the input text."""
+    present_indices = text_vector.indices
+    df_contrib = pd.DataFrame({
+        'word': feature_names[present_indices],
+        'score': text_vector.data * coefficients[present_indices]
+    })
+    return df_contrib.reindex(df_contrib['score'].abs().sort_values(ascending=False).index).head(top_n).to_dict('records')
+
