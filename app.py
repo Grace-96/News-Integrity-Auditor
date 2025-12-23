@@ -16,11 +16,12 @@ from huggingface_hub import hf_hub_download
 
 # --- SIDEBAR NAV & IDENTITY ---
 with st.sidebar:
-    # This uses a reliable URL for a high-tech scanner icon
-    st.image("https://cdn-icons-png.flaticon.com/512/2592/2592209.png", width=100)
+    # We use Markdown instead of st.image to prevent storage errors
+    st.markdown("## 🛰️ **CORE SYSTEM**")
+    st.markdown("---")
     
     st.markdown("### 🔭 **SYSTEM NAV**")
-    # This selector creates the page navigation without duplication
+    # One single radio button to control your pages
     page = st.radio("Select Interface:", ["Truth Scanner", "Methodology"], label_visibility="collapsed")
     
     st.divider()
@@ -32,6 +33,7 @@ with st.sidebar:
     Neural SVM Engine calibrated for high-precision disinformation detection.
     """)
     
+    st.caption("v2.5 Stable Build | Dec 2025")
     st.caption("v2.5 Stable Build | Dec 2025")
 
 # --- CYBER-INTELLIGENCE STYLING ---
@@ -251,6 +253,7 @@ if st.button("INITIATE TRUTH SCAN"):
 
 st.markdown("---")
 st.caption("Developed by News Integrity Auditor Labs | Proprietary Neural Engine")
+
 
 
 
