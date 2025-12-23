@@ -84,27 +84,7 @@ def apply_intelligence_theme(file_path):
         color: white;
         box-shadow: 0 0 25px #ff0055;
     }}
-    /* 1. Target the Sidebar specifically */
-    [data-testid="stSidebar"] {
-        background-color: #080a0f !important; /* Deep Void Black */
-        border-right: 2px solid #00f2ff; /* Neon Cyan Glow */
-    }
     
-    /* 2. Style the text inside the Sidebar */
-    [data-testid="stSidebar"] .stMarkdown, 
-    [data-testid="stSidebar"] h1, 
-    [data-testid="stSidebar"] h2, 
-    [data-testid="stSidebar"] h3 {
-        color: #ffffff !important;
-        font-family: 'Orbitron', sans-serif;
-    }
-
-    /* 3. Make the Info box look like a glowing terminal */
-    [data-testid="stSidebar"] .stAlert {
-        background-color: #0d1117;
-        color: #00f2ff;
-        border: 1px solid #00f2ff;
-    }
     </style>
     ''', unsafe_allow_html=True)
 
@@ -249,6 +229,7 @@ if st.button("INITIATE TRUTH SCAN"):
 
 st.markdown("---")
 st.caption("Developed by News Integrity Auditor Labs | Proprietary Neural Engine")
+
 
 
 
