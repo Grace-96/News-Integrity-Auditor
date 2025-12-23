@@ -1,4 +1,4 @@
- import streamlit as st
+import streamlit as st
 import joblib
 import numpy as np
 import os
@@ -171,4 +171,5 @@ if st.button("INITIATE TRUTH SCAN"):
 
 st.markdown("---")
 st.caption("Developed by News Integrity Auditor Labs | Proprietary Neural Engine")
+
 
