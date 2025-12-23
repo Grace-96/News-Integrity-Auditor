@@ -121,6 +121,30 @@ if page == "Truth Scanner":
                 indices = vec.indices
                 df = pd.DataFrame({'Term': feature_names[indices], 'Impact': vec.data * coefficients[indices]})
                 st.dataframe(df.sort_values(by='Impact', ascending=False).head(8), hide_index=True)
+                # --- GENERATE DOWNLOADABLE REPORT ---
+        st.markdown("---")
+        
+        # Creating the text content for the report
+        report_text = (
+            f"TRUTH ENGINE INTEL REPORT\n"
+            f"==========================\n"
+            f"TIMESTAMP: {time.ctime()}\n"
+            f"VERDICT: {verdict}\n"
+            f"ENGINE CONFIDENCE: {confidence*100:.2f}%\n"
+            f"INTEGRITY SCORE: {prob_true*100:.1f}%\n"
+            f"SKEPTICISM LEVEL: {prob_fake*100:.1f}%\n"
+            f"--------------------------\n"
+            f"TARGET DATA: {raw_input[:100]}..." # Truncated for brevity
+        )
+
+        # The Download Button
+        st.download_button(
+            label="📩 DOWNLOAD INTELLIGENCE REPORT",
+            data=report_text,
+            file_name=f"Truth_Audit_{int(time.time())}.txt",
+            mime="text/plain",
+            help="Export this forensic scan as a timestamped text file."
+        )
 
 # --- PAGE 2: METHODOLOGY ---
 else:
@@ -143,4 +167,5 @@ else:
 
 st.markdown("---")
 st.caption("Developed by News Integrity Auditor Labs")
+
 
