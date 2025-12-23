@@ -168,8 +168,25 @@ if st.button("INITIATE TRUTH SCAN"):
                     "Impact": st.column_config.NumberColumn(format="%.4f")
                 }
             )
+            st.markdown("---")
+            report_data = (
+                f"TRUTH ENGINE INTEL REPORT\n"
+                f"==========================\n"
+                f"TIMESTAMP: {time.ctime()}\n"
+                f"VERDICT: {verdict}\n"
+                f"ENGINE CONFIDENCE: {confidence*100:.2f}%\n"
+                f"INTEGRITY SCORE: {probs[1]*100:.1f}%\n"
+                f"SKEPTICISM LEVEL: {probs[0]*100:.1f}%\n"
+            )
+            st.download_button(
+                label="📩 DOWNLOAD INTELLIGENCE REPORT",
+                data=report_data,
+                file_name=f"Audit_Report_{int(time.time())}.txt",
+                mime="text/plain"
+            )
 
 st.markdown("---")
 st.caption("Developed by News Integrity Auditor Labs | Proprietary Neural Engine")
+
 
 
